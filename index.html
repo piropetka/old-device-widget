@@ -8,14 +8,31 @@
     <style>
         body { padding: 20px; }
         .widget { margin-bottom: 20px; }
+        .weather-location { margin-bottom: 10px; }
+        .weather-title { font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Weather Widget</h2>
         <div class="widget" id="weather-widget">
-            <button class="btn btn-primary" id="get-weather">Get Weather</button>
-            <div id="weather-result"></div>
+            <button class="btn btn-primary" id="get-weather">Refresh All</button>
+            <div id="weather-current" class="weather-location">
+                <div class="weather-title">Current Location</div>
+                <div class="weather-result"></div>
+            </div>
+            <div id="weather-gdansk" class="weather-location">
+                <div class="weather-title">Gdańsk</div>
+                <div class="weather-result"></div>
+            </div>
+            <div id="weather-wejherowo" class="weather-location">
+                <div class="weather-title">Wejherowo</div>
+                <div class="weather-result"></div>
+            </div>
+            <div id="weather-berlin" class="weather-location">
+                <div class="weather-title">Berlin</div>
+                <div class="weather-result"></div>
+            </div>
         </div>
         <h2>News Widget</h2>
         <div class="widget" id="news-widget">
@@ -27,121 +44,87 @@
     <!-- jQuery 1.9.1 is compatible with iOS 6 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
-        function loadWeather(lat, lon) {
-            $('#weather-result').html('Loading...');
+        // Helper for weather display
+        function showWeather(selector, text) {
+            $(selector).html(text);
+        }
+
+        // wttr.in JSONP for city or lat,lon
+        function loadWeatherWttr(selector, query, label) {
+            var $result = $(selector);
+            $result.html('Loading...');
+            // wttr.in JSONP returns a string, not JSON
             $.ajax({
-                url: 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current_weather=true',
-                dataType: 'json',
+                url: 'http://wttr.in/' + encodeURIComponent(query) + '?format=%l:+%t,+%w',
+                dataType: 'jsonp',
+                jsonp: 'callback',
                 success: function(data) {
-                    if (data.current_weather) {
-                        $('#weather-result').html(
-                            'Temperature: ' + data.current_weather.temperature + '°C<br>' +
-                            'Wind: ' + data.current_weather.windspeed + ' km/h'
-                        );
-                    } else {
-                        $('#weather-result').html('Weather data not available.');
+                    var html = '';
+                    if (label) {
+                        html += '<div><strong>Location:</strong> ' + label + '</div>';
                     }
+                    html += data;
+                    $result.html(html);
                 },
                 error: function() {
-                    $('#weather-result').html('Failed to load weather.');
+                    $result.html('Failed to load weather.');
                 }
             });
         }
 
-        // Load weather on page load using geolocation
-        function updateLocationName(lat, lon) {
-            $.ajax({
-            url: 'https://nominatim.openstreetmap.org/reverse',
-            data: {
-                format: 'json',
-                lat: lat,
-                lon: lon
-            },
-            dataType: 'json',
-            success: function(data) {
-                if (data && data.display_name) {
-                $('#weather-result').prepend('<div><strong>Location:</strong> ' + data.display_name + '</div>');
-                }
-            }
-            });
-        }
-
-        // Wrap loadWeather to also update location name
-        function loadWeatherWithLocation(lat, lon) {
-            $('#weather-result').html('Loading...');
-            $.ajax({
-            url: 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current_weather=true',
-            dataType: 'json',
-            success: function(data) {
-                if (data.current_weather) {
-                $('#weather-result').html(
-                    'Temperature: ' + data.current_weather.temperature + '°C<br>' +
-                    'Wind: ' + data.current_weather.windspeed + ' km/h'
+        function loadAllWeather() {
+            // Current location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        var latlon = position.coords.latitude + ',' + position.coords.longitude;
+                        loadWeatherWttr('#weather-current .weather-result', latlon, 'Current Location');
+                    },
+                    function() {
+                        // fallback: Gdańsk
+                        loadWeatherWttr('#weather-current .weather-result', 'Gdańsk', 'Gdańsk');
+                    }
                 );
-                updateLocationName(lat, lon);
-                } else {
-                $('#weather-result').html('Weather data not available.');
-                }
-            },
-            error: function() {
-                $('#weather-result').html('Failed to load weather.');
+            } else {
+                loadWeatherWttr('#weather-current .weather-result', 'Gdańsk', 'Gdańsk');
             }
-            });
+            // Gdańsk
+            loadWeatherWttr('#weather-gdansk .weather-result', 'Gdańsk', 'Gdańsk');
+            // Wejherowo
+            loadWeatherWttr('#weather-wejherowo .weather-result', 'Wejherowo', 'Wejherowo');
+            // Berlin
+            loadWeatherWttr('#weather-berlin .weather-result', 'Berlin', 'Berlin');
         }
+
         $(function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        loadWeather(position.coords.latitude, position.coords.longitude);
-                    },
-                    function() {
-                        // Fallback to default if location not allowed
-                        loadWeather(54.605, 18.235);
-                    }
-                );
-            } else {
-                // Fallback to default if geolocation not supported
-                loadWeather(54.605, 18.235);
-            }
-        });
+            loadAllWeather();
 
-        // Manual weather reload
-        $('#get-weather').click(function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        loadWeather(position.coords.latitude, position.coords.longitude);
-                    },
-                    function() {
-                        loadWeather(35, 139);
-                    }
-                );
-            } else {
-                loadWeather(35, 139);
-            }
-        });
+            $('#get-weather').click(function() {
+                loadAllWeather();
+            });
 
-        // Example: News API (replace with your own endpoint if needed)
-        $('#get-news').click(function() {
-            $('#news-result').html('<li>Loading...</li>');
-            $.ajax({
-                url: 'https://hn.algolia.com/api/v1/search?tags=front_page',
-                dataType: 'json',
-                success: function(data) {
-                    var items = [];
-                    if (data.hits && data.hits.length) {
-                        for (var i = 0; i < Math.min(5, data.hits.length); i++) {
-                            var hit = data.hits[i];
-                            items.push('<li><a href="' + hit.url + '" target="_blank">' + hit.title + '</a></li>');
+            // News widget unchanged
+            $('#get-news').click(function() {
+                $('#news-result').html('<li>Loading...</li>');
+                $.ajax({
+                    url: 'https://hn.algolia.com/api/v1/search?tags=front_page',
+                    dataType: 'json',
+                    success: function(data) {
+                        var items = [];
+                        if (data.hits && data.hits.length) {
+                            for (var i = 0; i < Math.min(5, data.hits.length); i++) {
+                                var hit = data.hits[i];
+                                items.push('<li><a href="' + hit.url + '" target="_blank">' + hit.title + '</a></li>');
+                            }
+                            $('#news-result').html(items.join(''));
+                        } else {
+                            $('#news-result').html('<li>No news found.</li>');
                         }
-                        $('#news-result').html(items.join(''));
-                    } else {
-                        $('#news-result').html('<li>No news found.</li>');
+                    },
+                    error: function() {
+                        $('#news-result').html('<li>Failed to load news.</li>');
                     }
-                },
-                error: function() {
-                    $('#news-result').html('<li>Failed to load news.</li>');
-                }
+                });
             });
         });
     </script>
