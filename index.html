@@ -45,26 +45,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
         // Helper for weather display
-        function showWeather(selector, text) {
-            $(selector).html(text);
+        function showWeather(selector, text, label) {
+            var html = '';
+            if (label) {
+                html += '<div><strong>Location:</strong> ' + label + '</div>';
+            }
+            html += text;
+            $(selector).html(html);
         }
 
-        // wttr.in JSONP for city or lat,lon
+        // wttr.in plain text for city or lat,lon
         function loadWeatherWttr(selector, query, label) {
             var $result = $(selector);
             $result.html('Loading...');
-            // wttr.in JSONP returns a string, not JSON
             $.ajax({
                 url: 'http://wttr.in/' + encodeURIComponent(query) + '?format=%l:+%t,+%w',
-                dataType: 'jsonp',
-                jsonp: 'callback',
+                dataType: 'text',
                 success: function(data) {
-                    var html = '';
-                    if (label) {
-                        html += '<div><strong>Location:</strong> ' + label + '</div>';
-                    }
-                    html += data;
-                    $result.html(html);
+                    showWeather($result, data, label);
                 },
                 error: function() {
                     $result.html('Failed to load weather.');
