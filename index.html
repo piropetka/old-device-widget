@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Old Device Widget</title>
+    <!-- Bootstrap 2.3.2 is compatible with iOS 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 20px; }
+        .widget { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Weather Widget</h2>
+        <div class="widget" id="weather-widget">
+            <button class="btn btn-primary" id="get-weather">Get Weather</button>
+            <div id="weather-result"></div>
+        </div>
+        <h2>News Widget</h2>
+        <div class="widget" id="news-widget">
+            <button class="btn btn-primary" id="get-news">Get News</button>
+            <ul id="news-result"></ul>
+        </div>
+    </div>
+
+    <!-- jQuery 1.9.1 is compatible with iOS 6 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+        // Example: Open-Meteo free weather API (no key required)
+        $('#get-weather').click(function() {
+            $('#weather-result').html('Loading...');
+            $.ajax({
+                url: 'https://api.open-meteo.com/v1/forecast?latitude=35&longitude=139&current_weather=true',
+                dataType: 'json',
+                success: function(data) {
+                    if (data.current_weather) {
+                        $('#weather-result').html(
+                            'Temperature: ' + data.current_weather.temperature + '°C<br>' +
+                            'Wind: ' + data.current_weather.windspeed + ' km/h'
+                        );
+                    } else {
+                        $('#weather-result').html('Weather data not available.');
+                    }
+                },
+                error: function() {
+                    $('#weather-result').html('Failed to load weather.');
+                }
+            });
+        });
+
+        // Example: News API (replace with your own endpoint if needed)
+        $('#get-news').click(function() {
+            $('#news-result').html('<li>Loading...</li>');
+            $.ajax({
+                url: 'https://hn.algolia.com/api/v1/search?tags=front_page',
+                dataType: 'json',
+                success: function(data) {
+                    var items = [];
+                    if (data.hits && data.hits.length) {
+                        for (var i = 0; i < Math.min(5, data.hits.length); i++) {
+                            var hit = data.hits[i];
+                            items.push('<li><a href="' + hit.url + '" target="_blank">' + hit.title + '</a></li>');
+                        }
+                        $('#news-result').html(items.join(''));
+                    } else {
+                        $('#news-result').html('<li>No news found.</li>');
+                    }
+                },
+                error: function() {
+                    $('#news-result').html('<li>Failed to load news.</li>');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
