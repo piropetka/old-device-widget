@@ -27,11 +27,10 @@
     <!-- jQuery 1.9.1 is compatible with iOS 6 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
-        // Example: Open-Meteo free weather API (no key required)
-        $('#get-weather').click(function() {
+        function loadWeather(lat, lon) {
             $('#weather-result').html('Loading...');
             $.ajax({
-                url: 'https://api.open-meteo.com/v1/forecast?latitude=35&longitude=139&current_weather=true',
+                url: 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current_weather=true',
                 dataType: 'json',
                 success: function(data) {
                     if (data.current_weather) {
@@ -47,6 +46,79 @@
                     $('#weather-result').html('Failed to load weather.');
                 }
             });
+        }
+
+        // Load weather on page load using geolocation
+        function updateLocationName(lat, lon) {
+            $.ajax({
+            url: 'https://nominatim.openstreetmap.org/reverse',
+            data: {
+                format: 'json',
+                lat: lat,
+                lon: lon
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data && data.display_name) {
+                $('#weather-result').prepend('<div><strong>Location:</strong> ' + data.display_name + '</div>');
+                }
+            }
+            });
+        }
+
+        // Wrap loadWeather to also update location name
+        function loadWeatherWithLocation(lat, lon) {
+            $('#weather-result').html('Loading...');
+            $.ajax({
+            url: 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current_weather=true',
+            dataType: 'json',
+            success: function(data) {
+                if (data.current_weather) {
+                $('#weather-result').html(
+                    'Temperature: ' + data.current_weather.temperature + '°C<br>' +
+                    'Wind: ' + data.current_weather.windspeed + ' km/h'
+                );
+                updateLocationName(lat, lon);
+                } else {
+                $('#weather-result').html('Weather data not available.');
+                }
+            },
+            error: function() {
+                $('#weather-result').html('Failed to load weather.');
+            }
+            });
+        }
+        $(function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        loadWeather(position.coords.latitude, position.coords.longitude);
+                    },
+                    function() {
+                        // Fallback to default if location not allowed
+                        loadWeather(54.605, 18.235);
+                    }
+                );
+            } else {
+                // Fallback to default if geolocation not supported
+                loadWeather(54.605, 18.235);
+            }
+        });
+
+        // Manual weather reload
+        $('#get-weather').click(function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        loadWeather(position.coords.latitude, position.coords.longitude);
+                    },
+                    function() {
+                        loadWeather(35, 139);
+                    }
+                );
+            } else {
+                loadWeather(35, 139);
+            }
         });
 
         // Example: News API (replace with your own endpoint if needed)
