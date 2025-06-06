@@ -44,30 +44,18 @@
     <!-- jQuery 1.9.1 is compatible with iOS 6 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>
-        // Helper for weather display
-        function showWeather(selector, text, label) {
+        function showWeather(selector, data, label) {
             var html = '';
             if (label) {
                 html += '<div><strong>Location:</strong> ' + label + '</div>';
             }
-            html += text;
+            if (data && data.current_weather) {
+                html += 'Temperature: ' + data.current_weather.temperature + '°C<br>' +
+                        'Wind: ' + data.current_weather.windspeed + ' km/h';
+            } else {
+                html += 'Weather data not available.';
+            }
             $(selector).html(html);
-        }
-
-        // wttr.in plain text for city or lat,lon
-        function loadWeatherWttr(selector, query, label) {
-            var $result = $(selector);
-            $result.html('Loading...');
-            $.ajax({
-                url: 'http://wttr.in/' + encodeURIComponent(query) + '?format=%l:+%t,+%w',
-                dataType: 'text',
-                success: function(data) {
-                    showWeather($result, data, label);
-                },
-                error: function() {
-                    $result.html('Failed to load weather.');
-                }
-            });
         }
 
         function loadWeatherOpenMeteo(selector, lat, lon, label) {
@@ -77,17 +65,7 @@
                 url: 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current_weather=true',
                 dataType: 'json',
                 success: function(data) {
-                    if (data.current_weather) {
-                        var html = '';
-                        if (label) {
-                            html += '<div><strong>Location:</strong> ' + label + '</div>';
-                        }
-                        html += 'Temperature: ' + data.current_weather.temperature + '°C<br>' +
-                                'Wind: ' + data.current_weather.windspeed + ' km/h';
-                        $result.html(html);
-                    } else {
-                        $result.html('Weather data not available.');
-                    }
+                    showWeather($result, data, label);
                 },
                 error: function() {
                     $result.html('Failed to load weather.');
