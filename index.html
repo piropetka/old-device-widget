@@ -34,6 +34,17 @@
                 <div class="weather-result"></div>
             </div>
         </div>
+        <h2>Words Group Widget</h2>
+        <div class="widget" id="words-widget">
+            <form>
+                <label for="groupCode">Group code:</label>
+                <input type="number" id="groupCode" min="1" max="99" required>
+                <button type="submit" class="btn btn-primary">Load Words</button>
+                <div class="card-body"></div>
+            </form>
+            <!-- Added element for showing text from response -->
+            <div id="words-response" style="margin-top:10px; font-size:14px; color:#333;"></div>
+        </div>
         <h2>News Widget</h2>
         <div class="widget" id="news-widget">
             <button class="btn btn-primary" id="get-news">Get News</button>
@@ -43,6 +54,8 @@
 
     <!-- jQuery 1.9.1 is compatible with iOS 6 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- Load the words group script -->
+    <script src="loadData.js"></script>
     <script>
         function showWeather(selector, data, label) {
             var html = '';
