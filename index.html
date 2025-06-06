@@ -70,28 +70,52 @@
             });
         }
 
+        function loadWeatherOpenMeteo(selector, lat, lon, label) {
+            var $result = $(selector);
+            $result.html('Loading...');
+            $.ajax({
+                url: 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current_weather=true',
+                dataType: 'json',
+                success: function(data) {
+                    if (data.current_weather) {
+                        var html = '';
+                        if (label) {
+                            html += '<div><strong>Location:</strong> ' + label + '</div>';
+                        }
+                        html += 'Temperature: ' + data.current_weather.temperature + '°C<br>' +
+                                'Wind: ' + data.current_weather.windspeed + ' km/h';
+                        $result.html(html);
+                    } else {
+                        $result.html('Weather data not available.');
+                    }
+                },
+                error: function() {
+                    $result.html('Failed to load weather.');
+                }
+            });
+        }
+
         function loadAllWeather() {
             // Current location
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
-                        var latlon = position.coords.latitude + ',' + position.coords.longitude;
-                        loadWeatherWttr('#weather-current .weather-result', latlon, 'Current Location');
+                        loadWeatherOpenMeteo('#weather-current .weather-result', position.coords.latitude, position.coords.longitude, 'Current Location');
                     },
                     function() {
                         // fallback: Gdańsk
-                        loadWeatherWttr('#weather-current .weather-result', 'Gdańsk', 'Gdańsk');
+                        loadWeatherOpenMeteo('#weather-current .weather-result', 54.352, 18.646, 'Gdańsk');
                     }
                 );
             } else {
-                loadWeatherWttr('#weather-current .weather-result', 'Gdańsk', 'Gdańsk');
+                loadWeatherOpenMeteo('#weather-current .weather-result', 54.352, 18.646, 'Gdańsk');
             }
             // Gdańsk
-            loadWeatherWttr('#weather-gdansk .weather-result', 'Gdańsk', 'Gdańsk');
+            loadWeatherOpenMeteo('#weather-gdansk .weather-result', 54.352, 18.646, 'Gdańsk');
             // Wejherowo
-            loadWeatherWttr('#weather-wejherowo .weather-result', 'Wejherowo', 'Wejherowo');
+            loadWeatherOpenMeteo('#weather-wejherowo .weather-result', 54.605, 18.235, 'Wejherowo');
             // Berlin
-            loadWeatherWttr('#weather-berlin .weather-result', 'Berlin', 'Berlin');
+            loadWeatherOpenMeteo('#weather-berlin .weather-result', 52.52, 13.405, 'Berlin');
         }
 
         $(function() {
