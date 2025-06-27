@@ -5,22 +5,37 @@ $(document).ready(function () {
   $("form").submit(function (event) {
     event.preventDefault();
     $("[type='submit']").prop("disabled", true);
-    var wordsGroupUrl = "https://api.jsonbin.io/v3/b/637d40f465b57a31e6bfb872/latest?meta=false";
-    $("#words-response").text("Loading...");
+    var weatherUrl = "https://api.jsonbin.io/v3/b/685d63c98561e97a502c51f2/latest?meta=false";
+    $("#weather-response").text("Loading...");
+    // Clear table cells
+    $("#w-location,#w-description,#w-temp,#w-feels,#w-min,#w-max,#w-sunrise,#w-sunset,#w-fetch").text("");
     $.ajax({
-      url: wordsGroupUrl,
+      url: weatherUrl,
       type: "GET",
       headers: {
-        "X-Access-Key": "$2b$10$71xxBdHxC6yhejbkvOo2u.25nY.VP5jj1yPkhpl6YT78yw1ZqGSh2"
+        "X-Access-Key": "$2a$10$ighuwt7GfsVuJu5IJlU3TOp41N8YXVwXnlTrHRvAj2p6QhHFNMJdS"
       },
       dataType: "json",
       success: function (data) {
-        // Show the whole JSON response as text
-        $("#words-response").text(JSON.stringify(data));
+        var weather = data && data.weather ? data.weather : null;
+        if (weather) {
+          $("#w-location").text(weather.name || "");
+          $("#w-description").text(weather.description || "");
+          $("#w-temp").text(weather.temp !== undefined ? weather.temp + "°C" : "");
+          $("#w-feels").text(weather.feels_like !== undefined ? weather.feels_like + "°C" : "");
+          $("#w-min").text(weather.temp_min !== undefined ? weather.temp_min + "°C" : "");
+          $("#w-max").text(weather.temp_max !== undefined ? weather.temp_max + "°C" : "");
+          $("#w-sunrise").text(weather.sunrise || "");
+          $("#w-sunset").text(weather.sunset || "");
+          $("#w-fetch").text(weather.fetch_time_str || "");
+          $("#weather-response").text("");
+        } else {
+          $("#weather-response").text("No weather data found.");
+        }
         $("[type='submit']").prop("disabled", false);
       },
       error: function () {
-        $("#words-response").text("Failed to load data.");
+        $("#weather-response").text("Failed to load data.");
         $("[type='submit']").prop("disabled", false);
       }
     });

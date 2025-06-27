@@ -14,36 +14,26 @@
 </head>
 <body>
     <div class="container">
-        <h2>Weather Widget</h2>
-        <div class="widget" id="weather-widget">
-            <button class="btn btn-primary" id="get-weather">Refresh All</button>
-            <div id="weather-current" class="weather-location">
-                <div class="weather-title">Current Location</div>
-                <div class="weather-result"></div>
-            </div>
-            <div id="weather-gdansk" class="weather-location">
-                <div class="weather-title">Gdańsk</div>
-                <div class="weather-result"></div>
-            </div>
-            <div id="weather-wejherowo" class="weather-location">
-                <div class="weather-title">Wejherowo</div>
-                <div class="weather-result"></div>
-            </div>
-            <div id="weather-berlin" class="weather-location">
-                <div class="weather-title">Berlin</div>
-                <div class="weather-result"></div>
-            </div>
-        </div>
-        <h2>Words Group Widget</h2>
-        <div class="widget" id="words-widget">
+        <h2>Weather</h2>
+        <div class="widget">
             <form>
-                <label for="groupCode">Group code:</label>
-                <input type="number" id="groupCode" min="1" max="99" required>
-                <button type="submit" class="btn btn-primary">Load Words</button>
-                <div class="card-body"></div>
+                <button type="submit" class="btn btn-primary">Load Weather</button>
             </form>
-            <!-- Added element for showing text from response -->
-            <div id="words-response" style="margin-top:10px; font-size:14px; color:#333;"></div>
+            <!-- Table for weather data -->
+            <table id="weather-table" class="table table-bordered" style="background:#fff; margin-top:10px;">
+                <tbody>
+                    <tr><th>Location</th><td id="w-location"></td></tr>
+                    <tr><th>Description</th><td id="w-description"></td></tr>
+                    <tr><th>Temperature</th><td id="w-temp"></td></tr>
+                    <tr><th>Feels Like</th><td id="w-feels"></td></tr>
+                    <tr><th>Min Temp</th><td id="w-min"></td></tr>
+                    <tr><th>Max Temp</th><td id="w-max"></td></tr>
+                    <tr><th>Sunrise</th><td id="w-sunrise"></td></tr>
+                    <tr><th>Sunset</th><td id="w-sunset"></td></tr>
+                    <tr><th>Fetched At</th><td id="w-fetch"></td></tr>
+                </tbody>
+            </table>
+            <div id="weather-response" style="margin-top:10px; font-size:14px; color:#333;"></div>
         </div>
         <h2>News Widget</h2>
         <div class="widget" id="news-widget">
@@ -55,91 +45,6 @@
     <!-- jQuery 1.9.1 is compatible with iOS 6 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <!-- Load the words group script -->
-    <script src="loadData.js"></script>
-    <script>
-        function showWeather(selector, data, label) {
-            var html = '';
-            if (label) {
-                html += '<div><strong>Location:</strong> ' + label + '</div>';
-            }
-            if (data && data.current_weather) {
-                html += 'Temperature: ' + data.current_weather.temperature + '°C<br>' +
-                        'Wind: ' + data.current_weather.windspeed + ' km/h';
-            } else {
-                html += 'Weather data not available.';
-            }
-            $(selector).html(html);
-        }
-
-        function loadWeatherOpenMeteo(selector, lat, lon, label) {
-            var $result = $(selector);
-            $result.html('Loading...');
-            $.ajax({
-                url: 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current_weather=true',
-                dataType: 'json',
-                success: function(data) {
-                    showWeather($result, data, label);
-                },
-                error: function() {
-                    $result.html('Failed to load weather.');
-                }
-            });
-        }
-
-        function loadAllWeather() {
-            // Current location
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        loadWeatherOpenMeteo('#weather-current .weather-result', position.coords.latitude, position.coords.longitude, 'Current Location');
-                    },
-                    function() {
-                        // fallback: Gdańsk
-                        loadWeatherOpenMeteo('#weather-current .weather-result', 54.352, 18.646, 'Gdańsk');
-                    }
-                );
-            } else {
-                loadWeatherOpenMeteo('#weather-current .weather-result', 54.352, 18.646, 'Gdańsk');
-            }
-            // Gdańsk
-            loadWeatherOpenMeteo('#weather-gdansk .weather-result', 54.352, 18.646, 'Gdańsk');
-            // Wejherowo
-            loadWeatherOpenMeteo('#weather-wejherowo .weather-result', 54.605, 18.235, 'Wejherowo');
-            // Berlin
-            loadWeatherOpenMeteo('#weather-berlin .weather-result', 52.52, 13.405, 'Berlin');
-        }
-
-        $(function() {
-            loadAllWeather();
-
-            $('#get-weather').click(function() {
-                loadAllWeather();
-            });
-
-            // News widget unchanged
-            $('#get-news').click(function() {
-                $('#news-result').html('<li>Loading...</li>');
-                $.ajax({
-                    url: 'https://hn.algolia.com/api/v1/search?tags=front_page',
-                    dataType: 'json',
-                    success: function(data) {
-                        var items = [];
-                        if (data.hits && data.hits.length) {
-                            for (var i = 0; i < Math.min(5, data.hits.length); i++) {
-                                var hit = data.hits[i];
-                                items.push('<li><a href="' + hit.url + '" target="_blank">' + hit.title + '</a></li>');
-                            }
-                            $('#news-result').html(items.join(''));
-                        } else {
-                            $('#news-result').html('<li>No news found.</li>');
-                        }
-                    },
-                    error: function() {
-                        $('#news-result').html('<li>Failed to load news.</li>');
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="loadData.js"></script>   
 </body>
 </html>
