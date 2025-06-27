@@ -1,40 +1,79 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Old Device Widget</title>
     <!-- Bootstrap 2.3.2 is compatible with iOS 6 -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { padding: 20px; }
-        .widget { margin-bottom: 20px; }
-        .weather-location { margin-bottom: 10px; }
-        .weather-title { font-weight: bold; }
+        body {
+            padding: 20px;
+        }
+
+        .widget {
+            margin-bottom: 20px;
+        }
+
+        .weather-location {
+            margin-bottom: 10px;
+        }
+
+        .weather-title {
+            font-weight: bold;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Weather</h2>
         <div class="widget">
             <form>
-                <button type="submit" class="btn btn-primary">Load Weather</button>
-            </form>
-            <!-- Table for weather data -->
-            <table id="weather-table" class="table table-bordered" style="background:#fff; margin-top:10px;">
-                <tbody>
-                    <tr><th>Location</th><td id="w-location"></td></tr>
-                    <tr><th>Description</th><td id="w-description"></td></tr>
-                    <tr><th>Temperature</th><td id="w-temp"></td></tr>
-                    <tr><th>Feels Like</th><td id="w-feels"></td></tr>
-                    <tr><th>Min Temp</th><td id="w-min"></td></tr>
-                    <tr><th>Max Temp</th><td id="w-max"></td></tr>
-                    <tr><th>Sunrise</th><td id="w-sunrise"></td></tr>
-                    <tr><th>Sunset</th><td id="w-sunset"></td></tr>
-                    <tr><th>Fetched At</th><td id="w-fetch"></td></tr>
-                </tbody>
-            </table>
-            <div id="weather-response" style="margin-top:10px; font-size:14px; color:#333;"></div>
+                <h1 id="w-temp" style="font-size:74px;">0'C</h1>
+                <div class="row-fluid">
+                    <div class="span6">
+                        <h3 id="w-min">Min</h3>
+                    </div>
+                    <div class="span6">
+                        <h3 id="w-max">Max</h3>
+                    </div>
+                </div>
+                <!-- Table for weather data -->
+                <table id="weather-table" class="table table-bordered" style="background:#fff; margin-top:10px;">
+                    <tbody>
+                        <tr>
+                            <th>Location</th>
+                            <td id="w-location"></td>
+                        </tr>
+                        <tr>
+                            <th>Description</th>
+                            <td id="w-description"></td>
+                        </tr>
+                        <tr>
+                            <th>Feels Like</th>
+                            <td id="w-feels"></td>
+                        </tr>
+                        <tr>
+                            <th>Sunrise</th>
+                            <td id="w-sunrise"></td>
+                        </tr>
+                        <tr>
+                            <th>Sunset</th>
+                            <td id="w-sunset"></td>
+                        </tr>
+                        <tr>
+                            <th>Fetched At</th>
+                            <td id="w-fetch"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div id="weather-response" style="margin-top:10px; font-size:14px; color:#333;"></div>
         </div>
+
+        <button type="submit" class="btn btn-primary">Load Weather</button>
+
+        </form>
         <h2>News Widget</h2>
         <div class="widget" id="news-widget">
             <button class="btn btn-primary" id="get-news">Get News</button>
@@ -45,6 +84,7 @@
     <!-- jQuery 1.9.1 is compatible with iOS 6 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <!-- Load the words group script -->
-    <script src="loadData.js"></script>   
+    <script src="loadData.js"></script>
 </body>
+
 </html>
