@@ -27,52 +27,51 @@
 
 <body>
     <div class="container">
-        <h2>Weather</h2>
         <div class="widget">
             <form>
-                <h1 id="w-temp" style="padding: 30px; font-size:148px;">0'C</h1>
+                <div class="row-fluid">
+                    <div class="span4">
+                        <h2 id="w-location">San Francisco</h2>
+                    </div>
+                    <div class="span8">
+                        <h2 id="w-description">słabe opady deszczu</h2>
+                    </div>
+                </div>
+
+                <h1 id="w-temp" style="padding: 30px; font-size:148px;">0°C</h1>
                 <div class="row-fluid">
                     <div class="span6">
-                        <h1 id="w-min">Min</h1>
+                        <h1 id="w-min">Min: 0°C</h1>
                     </div>
                     <div class="span6">
-                        <h1 id="w-max">Max</h1>
+                        <h1 id="w-max">Max: 0°C</h1>
                     </div>
                 </div>
                 <!-- Table for weather data -->
-                <table id="weather-table" class="table table-bordered" style="background:#fff; margin-top:10px;">
+                <table id="weather-table" class="table table-bordered"
+                    style="font-size:18px; background:#fff; margin-top:10px;">
                     <tbody>
                         <tr>
-                            <th>Location</th>
-                            <td id="w-location"></td>
-                        </tr>
-                        <tr>
-                            <th>Description</th>
-                            <td id="w-description"></td>
-                        </tr>
-                        <tr>
-                            <th>Feels Like</th>
+                            <th>Odczówalna</th>
                             <td id="w-feels"></td>
                         </tr>
                         <tr>
-                            <th>Sunrise</th>
+                            <th>Wschód</th>
                             <td id="w-sunrise"></td>
                         </tr>
                         <tr>
-                            <th>Sunset</th>
+                            <th>Zachód</th>
                             <td id="w-sunset"></td>
                         </tr>
                         <tr>
-                            <th>Fetched At</th>
+                            <th>Aktualizacja</th>
                             <td id="w-fetch"></td>
                         </tr>
                     </tbody>
                 </table>
                 <div id="weather-response" style="margin-top:10px; font-size:14px; color:#333;"></div>
         </div>
-
-        <button type="submit" class="btn btn-primary">Load Weather</button>
-
+        <button type="submit" class="btn btn-primary">Zaktualizuj</button>
         </form>
         <h2>News Widget</h2>
         <div class="widget" id="news-widget">

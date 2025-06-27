@@ -23,8 +23,8 @@ $(document).ready(function () {
           $("#w-description").text(weather.description || "");
           $("#w-temp").text(weather.temp !== undefined ? weather.temp + "°C" : "");
           $("#w-feels").text(weather.feels_like !== undefined ? weather.feels_like + "°C" : "");
-          $("#w-min").text(weather.temp_min !== undefined ? weather.temp_min + "°C" : "");
-          $("#w-max").text(weather.temp_max !== undefined ? weather.temp_max + "°C" : "");
+          $("#w-min").text(weather.temp_min !== undefined ? "Min: " + weather.temp_min + "°C" : "");
+          $("#w-max").text(weather.temp_max !== undefined ? "Max: " + weather.temp_max + "°C" : "");
           $("#w-sunrise").text(weather.sunrise || "");
           $("#w-sunset").text(weather.sunset || "");
           $("#w-fetch").text(weather.fetch_time_str || "");
@@ -41,4 +41,5 @@ $(document).ready(function () {
     });
     return false;
   });
+  $("form").submit();
 });
