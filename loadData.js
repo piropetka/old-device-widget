@@ -21,10 +21,10 @@ $(document).ready(function () {
         if (weather) {
           $("#w-location").text(weather.name || "");
           $("#w-description").text(weather.description || "");
-          $("#w-temp").text(weather.temp !== undefined ? weather.temp + "°C" : "");
-          $("#w-feels").text(weather.feels_like !== undefined ? weather.feels_like + "°C" : "");
-          $("#w-min").text(weather.temp_min !== undefined ? "Min: " + weather.temp_min + "°C" : "");
-          $("#w-max").text(weather.temp_max !== undefined ? "Max: " + weather.temp_max + "°C" : "");
+          $("#w-temp").text(weather.temp !== undefined ? Math.round(weather.temp) + "°C" : "");
+          $("#w-feels").text(weather.feels_like !== undefined ? Math.round(weather.feels_like) + "°C" : "");
+          $("#w-min").text(weather.temp_min !== undefined ? "Min: " + Math.round(weather.temp_min) + "°C" : "");
+          $("#w-max").text(weather.temp_max !== undefined ? "Max: " + Math.round(weather.temp_max) + "°C" : "");
           $("#w-sunrise").text(weather.sunrise || "");
           $("#w-sunset").text(weather.sunset || "");
           $("#w-fetch").text(weather.fetch_time_str || "");
