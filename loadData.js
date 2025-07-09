@@ -5,16 +5,13 @@ $(document).ready(function () {
   $("form").submit(function (event) {
     event.preventDefault();
     $("[type='submit']").prop("disabled", true);
-    var weatherUrl = "https://api.jsonbin.io/v3/b/685d63c98561e97a502c51f2/latest?meta=false";
+    var weatherUrl = "http://nienajedzony.chickenkiller.com:5000/api/data";
     $("#weather-response").text("Loading...");
     // Clear table cells
     $("#w-location,#w-description,#w-temp,#w-feels,#w-min,#w-max,#w-sunrise,#w-sunset,#w-fetch").text("");
     $.ajax({
       url: weatherUrl,
       type: "GET",
-      headers: {
-        "X-Access-Key": "$2a$10$ighuwt7GfsVuJu5IJlU3TOp41N8YXVwXnlTrHRvAj2p6QhHFNMJdS"
-      },
       dataType: "json",
       success: function (data) {
         var weather = data && data.weather ? data.weather : null;
